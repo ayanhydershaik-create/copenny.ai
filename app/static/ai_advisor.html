@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Advisor — copenny.ai</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0B0B0B; color: #e2e8f0; font-family: 'Outfit', sans-serif; min-height: 100vh; overflow-x: hidden; }
+
+    nav {
+      position: sticky; top: 0; z-index: 50;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2.5rem;
+      background: rgba(6,11,20,0.8); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo img { height: 36px; }
+    .nav-logo span { font-size: 1.1rem; font-weight: 700; color: #fff; }
+    .nav-back { color: #F59E0B; text-decoration: none; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 6px; transition: opacity 0.2s; }
+    .nav-back:hover { opacity: 0.7; }
+
+    .hero {
+      text-align: center; padding: 8rem 2rem 5rem;
+      background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(245,158,11,0.08) 0%, transparent 70%);
+      position: relative;
+    }
+    .badge { display: inline-block; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); color: #F59E0B; padding: 0.35rem 1rem; border-radius: 999px; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 2rem; }
+    h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 900; color: #fff; margin-bottom: 1.5rem; line-height: 1.1; }
+    h1 span { color: #F59E0B; }
+    .subtitle { max-width: 700px; margin: 0 auto; color: #94a3b8; font-size: 1.15rem; line-height: 1.6; }
+
+    .content { max-width: 900px; margin: 0 auto; padding: 2rem 2rem 8rem; }
+    .section-grid { display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); margin-top: 4rem; }
+    
+    .card {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 28px; padding: 3rem;
+      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      position: relative; overflow: hidden;
+    }
+    .card:hover { border-color: rgba(245,158,11,0.25); transform: translateY(-10px); background: rgba(255,255,255,0.05); shadow: 0 20px 40px rgba(0,0,0,0.4); }
+    
+    .card-icon { width: 56px; height: 56px; border-radius: 18px; background: rgba(245,158,11,0.1); display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; }
+    .card-icon svg { stroke: #F59E0B; }
+    
+    h2 { font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 1rem; }
+    p { color: #94a3b8; font-size: 1rem; line-height: 1.8; margin-bottom: 1.5rem; }
+    
+    .feature-list { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
+    .feature-list li { display: flex; align-items: center; gap: 10px; color: #cbd5e1; font-size: 0.95rem; }
+    .feature-list li::before { content: '→'; color: #F59E0B; font-weight: bold; }
+
+    .cta-box {
+      margin-top: 6rem; padding: 4rem; text-align: center;
+      background: linear-gradient(145deg, rgba(245,158,11,0.05), transparent);
+      border: 1px solid rgba(245,158,11,0.1); border-radius: 40px;
+      position: relative;
+    }
+    .cta-btn {
+      display: inline-block; background: #F59E0B; color: #000; font-weight: 800;
+      padding: 1.25rem 3rem; border-radius: 999px; text-decoration: none;
+      font-size: 1.1rem; transition: all 0.3s;
+      box-shadow: 0 0 20px rgba(245,158,11,0.3);
+    }
+    .cta-btn:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(245,158,11,0.5); }
+
+    footer { text-align: center; padding: 4rem 2rem; border-top: 1px solid rgba(255,255,255,0.05); color: #475569; font-size: 0.9rem; letter-spacing: 0.05em; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/landing" class="nav-logo">
+    <img src="/static/iconcopenny.png" alt="Co Penny" />
+    <span>copenny.ai</span>
+  </a>
+  <a href="/landing" class="nav-back">
+    ← Back to Home
+  </a>
+</nav>
+
+<div class="hero">
+  <div class="badge">AI Advisor</div>
+  <h1>Cognitive <span>Wealth</span> Management</h1>
+  <p class="subtitle">Experience the next generation of financial intelligence. Our AI advisor doesn't just track spending—it predicts your future and builds your roadmap to prosperity.</p>
+</div>
+
+<div class="content">
+  <div class="section-grid">
+    <div class="card">
+      <div class="card-icon">
+        <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+      </div>
+      <h2>Neural Analysis</h2>
+      <p>Our deep learning engine processes thousands of data points from your transaction history to understand your unique lifestyle DNA.</p>
+      <ul class="feature-list">
+        <li>Merchant categorization logic</li>
+        <li>Predictive spending alerts</li>
+        <li>Pattern detection algorithms</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-icon">
+        <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <h2>Automated Growth</h2>
+      <p>Let the machine do the heavy lifting. We automatically identify leakage in your subscriptions and identify micro-investment opportunities.</p>
+      <ul class="feature-list">
+        <li>Subscription hibernation</li>
+        <li>Automated round-ups</li>
+        <li>Yield optimization tips</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="cta-box">
+    <h2 style="margin-bottom:1.5rem; font-size: 2.5rem;">Ready to upgrade your intellect?</h2>
+    <p style="margin-bottom:2.5rem;">Join the elite alpha testers and get early access to our neural wealth engine.</p>
+    <a href="/landing" class="cta-btn">Register for Early Access</a>
+  </div>
+</div>
+
+<footer>
+  &copy; 2025 Copenny.ai. All rights reserved.
+</footer>
+
+</body>
+</html>

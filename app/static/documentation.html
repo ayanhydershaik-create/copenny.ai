@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Documentation — copenny.ai</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0B0B0B; color: #e2e8f0; font-family: 'Outfit', sans-serif; min-height: 100vh; line-height: 1.6; }
+    nav { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: 1rem 2.5rem; background: rgba(6,11,20,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo img { height: 36px; }
+    .nav-logo span { font-size: 1.1rem; font-weight: 700; color: #fff; }
+    .nav-back { color: #F59E0B; text-decoration: none; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 6px; transition: opacity 0.2s; }
+    .nav-back:hover { opacity: 0.7; }
+    .hero { text-align: center; padding: 6rem 2rem 4rem; background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(245,158,11,0.06) 0%, transparent 70%); }
+    .badge { display: inline-block; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); color: #F59E0B; padding: 0.35rem 1rem; border-radius: 999px; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 1.5rem; }
+    h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; color: #fff; margin-bottom: 1rem; }
+    h1 span { color: #F59E0B; }
+    .subtitle { max-width: 600px; margin: 0 auto; color: #94a3b8; font-size: 1.05rem; line-height: 1.7; }
+    .content { max-width: 1000px; margin: 0 auto; padding: 4rem 2rem 6rem; display: grid; grid-template-columns: 250px 1fr; gap: 3rem; }
+    
+    .sidebar { position: sticky; top: 100px; height: fit-content; border-right: 1px solid rgba(255,255,255,0.05); padding-right: 2rem; }
+    .sidebar h3 { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: #475569; margin-bottom: 1.5rem; letter-spacing: 0.1em; }
+    .sidebar ul { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
+    .sidebar a { color: #94a3b8; text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+    .sidebar a:hover { color: #F59E0B; }
+    
+    .doc-section { margin-bottom: 5rem; }
+    h2 { font-size: 1.8rem; font-weight: 800; color: #fff; margin-bottom: 1.5rem; letter-spacing: -0.02em; }
+    p { color: #94a3b8; font-size: 1rem; margin-bottom: 1.5rem; }
+    
+    .code-block { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1.5rem; font-family: monospace; font-size: 0.9rem; color: #F59E0B; margin-bottom: 1.5rem; overflow-x: auto; }
+    
+    .feature-list { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+    .feature-list li { background: rgba(255,255,255,0.02); padding: 1rem; border-radius: 12px; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.03); }
+
+    footer { text-align: center; padding: 2rem; border-top: 1px solid rgba(255,255,255,0.05); color: #475569; font-size: 0.8rem; grid-column: span 2; }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="/landing" class="nav-logo">
+    <img src="/static/iconcopenny.png" alt="Co Penny" />
+    <span>copenny.ai</span>
+  </a>
+  <a href="/landing" class="nav-back">← Back to Home</a>
+</nav>
+<div class="hero">
+  <div class="badge">Documentation</div>
+  <h1>Developer <span>Resources</span></h1>
+  <p class="subtitle">A full guide to the Co Penny technical architecture, neural engine, and integration protocols.</p>
+</div>
+<div class="content">
+  <aside class="sidebar">
+    <h3>Fundamentals</h3>
+    <ul>
+      <li><a href="#intro">Introduction</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#neural-engine">Neural Engine</a></li>
+      <li><a href="#security">Security Specs</a></li>
+    </ul>
+    <h3 style="margin-top:2rem">Integration</h3>
+    <ul>
+      <li><a href="#csv-upload">CSV Schema</a></li>
+      <li><a href="#api-auth">API Auth</a></li>
+      <li><a href="#webhooks">Webhooks</a></li>
+    </ul>
+  </aside>
+
+  <main>
+    <section id="intro" class="doc-section">
+      <h2>Introduction</h2>
+      <p>Co Penny is an executive-grade AI financial advisor designed to bridge the gap between complex banking data and actionable wealth intelligence. This documentation provides everything you need to understand the underlying systems that power our platform.</p>
+    </section>
+
+    <section id="architecture" class="doc-section">
+      <h2>Core Architecture</h2>
+      <p>Our infrastructure is built for massive scale and extreme low-latency processing. We utilize a split-tier architecture:</p>
+      <ul class="feature-list">
+        <li><strong>Frontend</strong>: High-performance React with GSAP animation layer for zero-lag UI.</li>
+        <li><strong>Backend</strong>: Python-based FastAPI with asynchronous worker pools.</li>
+        <li><strong>Auth</strong>: Firebase Identity Platform with JWT-based session security.</li>
+        <li><strong>Database</strong>: Firebase Firestore for real-time document-oriented state persistence.</li>
+      </ul>
+    </section>
+
+    <section id="neural-engine" class="doc-section">
+      <h2>The Neural Engine</h2>
+      <p>The "brain" of Co Penny is a proprietary Transformer-based model optimized for financial sequence classification. It features:</p>
+      <ul class="feature-list" style="grid-template-columns: 1fr;">
+        <li><strong>Lifestyle Clustering</strong>: Identifies spending patterns across merchants.</li>
+        <li><strong>Anomaly Detection</strong>: Real-time identification of duplicate or unusual charges.</li>
+        <li><strong>Forecasting Layer</strong>: Predicts end-of-month balance based on historical burn rate.</li>
+      </ul>
+      <div class="code-block">
+        // API Sample: Requesting Neural Spend Analysis
+        GET /api/v1/analyze/{user_id}?range=90d
+      </div>
+    </section>
+
+    <section id="security" class="doc-section">
+      <h2>Fortress-Grade Security</h2>
+      <p>Security isn't an afterthought at Team RedHack; it's our foundational layer. We enforce:</p>
+      <ul>
+        <li><strong>Double-Encryption</strong>: Data is encrypted at the field level before entering the primary database.</li>
+        <li><strong>Isolative Sandboxing</strong>: Every user's personal model is stored in a logically isolated container.</li>
+        <li><strong>Zero-Trust Access</strong>: All internal service requests require mTLS certificates.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>&copy; 2025 Copenny.ai. All rights reserved.</footer>
+</div>
+</body>
+</html>

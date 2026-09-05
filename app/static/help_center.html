@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Help Center — copenny.ai</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0B0B0B; color: #e2e8f0; font-family: 'Outfit', sans-serif; min-height: 100vh; line-height: 1.6; }
+    nav { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: 1rem 2.5rem; background: rgba(6,11,20,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo img { height: 36px; }
+    .nav-logo span { font-size: 1.1rem; font-weight: 700; color: #fff; }
+    .nav-back { color: #F59E0B; text-decoration: none; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 6px; transition: opacity 0.2s; }
+    .nav-back:hover { opacity: 0.7; }
+    .hero { text-align: center; padding: 6rem 2rem 4rem; background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(245,158,11,0.06) 0%, transparent 70%); }
+    .badge { display: inline-block; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); color: #F59E0B; padding: 0.35rem 1rem; border-radius: 999px; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 1.5rem; }
+    h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; color: #fff; margin-bottom: 1rem; }
+    h1 span { color: #F59E0B; }
+    .subtitle { max-width: 600px; margin: 0 auto; color: #94a3b8; font-size: 1.05rem; line-height: 1.7; }
+    .content { max-width: 900px; margin: 0 auto; padding: 4rem 2rem 6rem; }
+    .faq-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; }
+    .faq-item { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; padding: 2rem; transition: border-color 0.3s; }
+    .faq-item:hover { border-color: rgba(245,158,11,0.3); }
+    .faq-cat { color: #F59E0B; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 0.5rem; display: block; }
+    h2 { font-size: 1.25rem; color: #fff; margin-bottom: 0.75rem; font-weight: 700; }
+    p { color: #94a3b8; font-size: 0.95rem; line-height: 1.6; }
+    .contact-cta { margin-top: 5rem; text-align: center; background: rgba(245,158,11,0.05); padding: 3rem; border-radius: 30px; border: 1px dashed rgba(245,158,11,0.2); }
+    footer { text-align: center; padding: 2rem; border-top: 1px solid rgba(255,255,255,0.05); color: #475569; font-size: 0.8rem; }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="/landing" class="nav-logo">
+    <img src="/static/iconcopenny.png" alt="Co Penny" />
+    <span>copenny.ai</span>
+  </a>
+  <a href="/landing" class="nav-back">← Back to Home</a>
+</nav>
+<div class="hero">
+  <div class="badge">Help Center</div>
+  <h1>Knowledge <span>Basics</span></h1>
+  <p class="subtitle">Search our comprehensive database for answers to common questions about your AI financial journey.</p>
+</div>
+<div class="content">
+  <div class="faq-grid">
+    <div class="faq-item">
+      <span class="faq-cat">Getting Started</span>
+      <h2>How do I upload my transactions?</h2>
+      <p>Navigate to your dashboard and select 'Upload Data'. Export your transaction history from your bank as a CSV file and drag it into the neural dropzone. Our AI will automatically categorize and analyze the data.</p>
+    </div>
+    <div class="faq-item">
+      <span class="faq-cat">Account Security</span>
+      <h2>Can Team RedHack see my actual bank login?</h2>
+      <p>Absolutely not. We use secure authentication protocols (Firebase) and do not store or access your bank credentials. We only process the transaction data you choose to share with the platform.</p>
+    </div>
+    <div class="faq-item">
+      <span class="faq-cat">Billing</span>
+      <h2>What happens if I cancel my subscription?</h2>
+      <p>You will retain access to your premium features until the end of the current billing cycle. After that, your data will remains encrypted in our system for 30 days before being automatically purged if the account is not reactivated.</p>
+    </div>
+    <div class="faq-item">
+      <span class="faq-cat">AI Advisor</span>
+      <h2>How accurate is the spending prediction?</h2>
+      <p>The neural advisor requires at least 3 months of transaction history to reach its peak accuracy (typically >92% categorization accuracy). The more you use it, the smarter it gets about your unique lifestyle habits.</p>
+    </div>
+    <div class="faq-item">
+      <span class="faq-cat">Technical</span>
+      <h2>What banks are currently supported?</h2>
+      <p>We support all major banks that offer CSV or QIF transaction exports. Automated real-time integration via Plaid is currently in beta for Pro users in select regions.</p>
+    </div>
+    <div class="faq-item">
+      <span class="faq-cat">Privacy</span>
+      <h2>How do I delete all my data?</h2>
+      <p>Within the dashboard under 'Privacy Settings', you can find the 'Nuclear Option'. Clicking this will instantly and permanently delete your transaction history and neural spending model from our servers.</p>
+    </div>
+  </div>
+
+  <div class="contact-cta">
+    <h2 style="font-size: 1.8rem; margin-bottom: 1rem;">Still have questions?</h2>
+    <p style="margin-bottom: 1.5rem;">Our human engineering team is ready to assist you with any advanced queries.</p>
+    <a href="/contact" style="color: #F59E0B; font-weight: 800; text-decoration: none; border: 1px solid #F59E0B; padding: 0.75rem 2rem; border-radius: 999px;">Contact VIP Support</a>
+  </div>
+</div>
+<footer>&copy; 2025 Copenny.ai. All rights reserved.</footer>
+</body>
+</html>

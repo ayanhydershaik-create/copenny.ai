@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: co-penny
+    env: python
+    buildCommand: pip install -r requirements.txt && (cd frontend && npm install && npm run build || true)
+    startCommand: python start_server.py
+    envVars:
+      - key: LLM_PROVIDER
+        value: featherless
+      - key: FEATHERLESS_API_KEY
+        sync: false
+      - key: FEATHERLESS_MODEL
+        value: Qwen/Qwen2.5-7B-Instruct
+      # PostgreSQL Database (Neon Cloud)
+      - key: DATABASE_URL
+        sync: false
+      # Firebase Public Configuration
+      - key: VITE_FIREBASE_API_KEY
+        value: AIzaSyAf6kxH4ow0O8fDuDwDMJV7yvePm0P508A
+      - key: VITE_FIREBASE_AUTH_DOMAIN
+        value: co-penny.firebaseapp.com
+      - key: VITE_FIREBASE_PROJECT_ID
+        value: co-penny
+      - key: VITE_FIREBASE_STORAGE_BUCKET
+        value: co-penny.firebasestorage.app
+      - key: VITE_FIREBASE_MESSAGING_SENDER_ID
+        value: "283095051490"
+      - key: VITE_FIREBASE_APP_ID
+        value: "1:283095051490:web:4ca8d62e782b8a653202bb"
+      - key: VITE_FIREBASE_MEASUREMENT_ID
+        value: G-P6GNHSG1JS
+      # Auth & Server
+      - key: JWT_SECRET
+        sync: false
+      - key: FIREBASE_CREDENTIALS_PATH
+        value: firebase_credentials.json
+      - key: PYTHONUNBUFFERED
+        value: "1"
+    healthCheckPath: /health

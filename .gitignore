@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment Variables (CRITICAL)
+.env
+.env.*
+
+# Virtual Environments
+venv/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment Variables (CRITICAL)
+.env
+.env.*
+!.env.example
+
+# Virtual Environments
+venv/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Local Data and State
+data/
+state/
+*.db
+*.sqlite3
+
+# Logs
+*.log
+
+# Secrets
+firebase_credentials.json
+
+# Scratch and Temporary Scripts
+scratch/
+test_*.py
+verify_*.py
+convert.py

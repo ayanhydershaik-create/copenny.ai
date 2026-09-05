@@ -1,0 +1,1218 @@
+<!doctype html>
+<html lang="en" class="dark">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="CoPenny — Your financial command centre. Powered by AI." />
+  <title>CoPenny | Financial Command Centre</title>
+  <script>
+    if (localStorage.getItem('copenny_authenticated') !== 'true' && !window.location.search.includes('demo=true')) {
+      window.location.href = '/landing';
+    }
+  </script>
+  <link rel="icon" type="image/png" href="/static/iconcopenny.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              gold: '#F59E0B',
+              'gold-light': '#FBBF24',
+              'gold-dim': 'rgba(245, 158, 11, 0.12)',
+              'gold-border': 'rgba(245, 158, 11, 0.28)',
+              dark: '#0B0B0B',
+              surface: '#121212',
+              card: '#161616',
+              border: '#222222',
+              'border-subtle': '#1B1B1B',
+              muted: '#7E7E7E',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.48.0/dist/apexcharts.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #0B0B0B;
+      --bg-sidebar: #0E0E0E;
+      --bg-card: #141414;
+      --border-color: #202020;
+      --accent-gold: #F59E0B;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-main);
+      color: #FFFFFF;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #262626;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3A3A3A;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 16px;
+      margin: 2px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #8C8C8C;
+      transition: all 0.15s ease;
+      cursor: pointer;
+      border: 1px solid transparent;
+      text-decoration: none;
+      user-select: none;
+    }
+
+    .nav-item:hover {
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .nav-item.active-nav {
+      color: #F59E0B;
+      background: rgba(245, 158, 11, 0.10);
+      border-color: rgba(245, 158, 11, 0.22);
+      font-weight: 600;
+    }
+
+    .nav-item.active-nav svg {
+      color: #F59E0B;
+    }
+
+    /* Card styling */
+    .cp-card {
+      background: #141414;
+      border: 1px solid #202020;
+      border-radius: 12px;
+      transition: border-color 0.2s ease;
+    }
+    .cp-card:hover {
+      border-color: #2E2E2E;
+    }
+
+    /* Message Bubbles */
+    .msg-user {
+      background: rgba(245, 158, 11, 0.08) !important;
+      border: 1px solid rgba(245, 158, 11, 0.22) !important;
+      align-self: flex-end;
+      border-radius: 12px 12px 2px 12px !important;
+      color: #F5F5F5;
+    }
+
+    .msg-bot {
+      background: #181818 !important;
+      border: 1px solid #262626 !important;
+      border-left: 3px solid #F59E0B !important;
+      align-self: flex-start;
+      border-radius: 2px 12px 12px 12px !important;
+      color: #E5E5E5;
+    }
+
+    .chat-label {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .label-user {
+      color: #FBBF24;
+      text-align: right;
+    }
+
+    .label-bot {
+      color: #F59E0B;
+    }
+
+    /* Chip pills */
+    .q-chip {
+      background: #181818;
+      border: 1px solid #282828;
+      color: #A3A3A3;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .q-chip:hover {
+      border-color: rgba(245, 158, 11, 0.4);
+      color: #F59E0B;
+      background: rgba(245, 158, 11, 0.06);
+    }
+
+    /* Pulse dot */
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    /* Health Gauge & Chart styling */
+    .apexcharts-canvas {
+      filter: none;
+    }
+    .apexcharts-tooltip {
+      background: #181818 !important;
+      border: 1px solid #2A2A2A !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6) !important;
+    }
+    .apexcharts-tooltip-title {
+      background: #202020 !important;
+      border-bottom: 1px solid #2A2A2A !important;
+      font-weight: 600 !important;
+    }
+  </style>
+</head>
+
+<body class="bg-[#0B0B0B] text-white antialiased flex h-screen w-screen overflow-hidden select-none">
+
+  <!-- Mobile Overlay -->
+  <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden md:hidden"></div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       LEFT SIDEBAR (Matches Reference Screenshot)
+  ══════════════════════════════════════════════════════════════ -->
+  <aside id="dashboardSidebar"
+    class="w-[200px] min-w-[200px] max-w-[200px] bg-[#0E0E0E] border-r border-[#1E1E1E] flex flex-col z-50 transition-all duration-300 shrink-0 h-full">
+
+    <!-- Brand Logo -->
+    <div class="px-5 py-4 border-b border-[#1E1E1E] flex items-center gap-3">
+      <a href="/landing" class="flex items-center gap-2.5 hover:opacity-90 transition-opacity">
+        <div class="w-7 h-7 rounded-md bg-[#F59E0B] flex items-center justify-center font-black text-xs text-black tracking-tighter shadow-sm">
+          CP
+        </div>
+        <span class="text-[#F59E0B] font-extrabold tracking-wider text-sm">COPENNY</span>
+      </a>
+    </div>
+
+    <!-- Navigation Modules -->
+    <div class="flex-1 py-4 overflow-y-auto custom-scrollbar flex flex-col justify-between">
+      <div>
+        <div class="px-5 pb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#555555]">
+          MODULES
+        </div>
+
+        <nav class="space-y-0.5">
+          <!-- Timeline (Overview) -->
+          <button onclick="switchTab('overview')" class="nav-item active-nav w-full text-left" id="nav-overview">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+            <span>Timeline</span>
+          </button>
+
+          <!-- Import Data -->
+          <button onclick="switchTab('data')" class="nav-item w-full text-left" id="nav-data">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <path d="M7 15h0M2 10h20"/>
+            </svg>
+            <span>Import Data</span>
+          </button>
+
+          <!-- Goals -->
+          <button onclick="switchTab('goals')" class="nav-item w-full text-left" id="nav-goals">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <circle cx="12" cy="12" r="6"/>
+              <circle cx="12" cy="12" r="2"/>
+            </svg>
+            <span>Goals</span>
+          </button>
+
+          <!-- Subscriptions -->
+          <button onclick="switchTab('subscriptions')" class="nav-item w-full text-left" id="nav-subscriptions">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <span>Subscriptions</span>
+          </button>
+
+          <!-- Budgets (Analytics) -->
+          <button onclick="switchTab('analytics')" class="nav-item w-full text-left" id="nav-analytics">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/>
+              <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/>
+              <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>
+            </svg>
+            <span>Budgets</span>
+          </button>
+
+          <!-- Chat -->
+          <button onclick="switchTab('chat')" class="nav-item w-full text-left" id="nav-chat">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span>Chat</span>
+          </button>
+
+          <!-- Rules -->
+          <button onclick="switchTab('rules')" class="nav-item w-full text-left" id="nav-rules">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+            <span>Rules</span>
+          </button>
+
+          <!-- Settings -->
+          <button onclick="switchTab('plans')" class="nav-item w-full text-left" id="nav-plans">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+            <span>Settings</span>
+          </button>
+
+          <!-- Log Out -->
+          <button onclick="handleLogout()" class="nav-item w-full text-left text-[#EF4444] hover:text-[#F87171] hover:bg-[#EF4444]/10 transition-colors mt-2" id="nav-logout">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            <span class="font-bold">Log Out</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Bottom System Status Box (Exact Match to Screenshot) -->
+      <div class="px-3 pt-4">
+        <div class="rounded-xl border border-[#222222] bg-[#121212] p-3.5 space-y-2">
+          <div class="flex items-center gap-2 text-[#7E7E7E]">
+            <svg class="w-3.5 h-3.5 text-[#F59E0B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <div class="text-[10px] leading-tight">
+              <span class="block text-[#666666]">System Status:</span>
+              <span class="font-bold text-[#D4D4D4] tracking-wider text-[9px]">ALL ENCRYPTED</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 pt-1 border-t border-[#1C1C1C]">
+            <span class="pulse-dot bg-[#EF4444]" id="dbStatusDot"></span>
+            <span class="text-[11px] font-medium text-[#8E8E8E]" id="dbStatusText">Active</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       MAIN CONTENT CONTAINER
+  ══════════════════════════════════════════════════════════════ -->
+  <div class="flex-1 flex flex-col h-full overflow-hidden bg-[#0B0B0B]">
+
+    <!-- ── TOP BAR (Matches Reference Screenshot) ─────────────── -->
+    <header class="h-[56px] border-b border-[#1C1C1C] bg-[#0E0E0E] flex items-center justify-between px-6 shrink-0 z-30">
+      
+      <!-- Left: Mobile Toggle & Search Bar -->
+      <div class="flex items-center gap-4 flex-1 max-w-md">
+        <button onclick="toggleSidebar()" class="md:hidden text-[#888888] hover:text-white p-1">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+
+        <div class="relative flex items-center w-full max-w-sm">
+          <span class="absolute left-3.5 text-[#666666]">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </span>
+          <input type="text" id="topbarSearch" placeholder="Ask Copenny anything..."
+            class="w-full bg-[#151515] border border-[#222222] rounded-lg pl-10 pr-10 py-1.5 text-xs text-white placeholder-[#606060] focus:outline-none focus:border-[#F59E0B] transition-colors"
+            onkeydown="if(event.key==='Enter'){switchTab('chat');const inp=document.getElementById('chatInput');if(inp){inp.value=this.value;this.value='';document.getElementById('chatForm').dispatchEvent(new Event('submit'));}}"/>
+          <span class="absolute right-3 text-[10px] text-[#555555] font-mono border border-[#262626] bg-[#1A1A1A] px-1.5 py-0.5 rounded">⌘K</span>
+        </div>
+      </div>
+
+      <!-- Right: Financial Indicators & User Profile (Matches Screenshot) -->
+      <div class="flex items-center gap-6">
+        
+        <!-- MONTHLY BURN -->
+        <div class="text-right hidden sm:block">
+          <span class="block text-[9px] uppercase tracking-wider font-bold text-[#666666]">MONTHLY BURN</span>
+          <span class="text-sm font-bold text-white tracking-tight" id="topbar-burn">₹4,820<span class="text-[11px] font-normal text-[#888888]">/mo</span></span>
+        </div>
+
+        <!-- SAVINGS RATE -->
+        <div class="text-right hidden sm:block">
+          <span class="block text-[9px] uppercase tracking-wider font-bold text-[#666666]">SAVINGS RATE</span>
+          <span class="text-sm font-bold text-[#F59E0B] tracking-tight flex items-center gap-1 justify-end" id="topbar-savings-rate">
+            42% <span class="text-xs">~^</span>
+          </span>
+        </div>
+
+        <!-- Notification Bell with Yellow Indicator -->
+        <div class="relative cursor-pointer text-[#888888] hover:text-white transition-colors" onclick="switchTab('chat')">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#F59E0B]"></span>
+        </div>
+
+        <!-- User Profile Pill & Dropdown -->
+        <div class="relative">
+          <div class="flex items-center gap-2.5 cursor-pointer pl-3 border-l border-[#222222] hover:opacity-90 transition-opacity" onclick="toggleUserMenu()">
+            <div class="w-7 h-7 rounded-full bg-[#10B981] text-black font-bold text-xs flex items-center justify-center" id="userInitials">
+              S
+            </div>
+            <div class="text-left leading-tight hidden lg:block">
+              <span class="block text-xs font-bold text-white tracking-wide truncate max-w-[140px]" id="userNameDisplay">SHAIK ADNAN HYDER</span>
+              <span class="block text-[10px] text-[#777777] truncate max-w-[140px]" id="userEmailDisplay">HYDERADNANSHAIK@GMAIL.COM</span>
+            </div>
+            <svg class="w-3.5 h-3.5 text-[#777777]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </div>
+
+          <!-- User Menu Dropdown -->
+          <div id="userMenuDropdown" class="hidden absolute right-0 mt-2 w-56 bg-[#121212] border border-[#262626] rounded-xl shadow-2xl py-2 z-50">
+            <div class="px-4 py-2.5 border-b border-[#222222]">
+              <span class="block text-xs font-bold text-white truncate" id="menuUserName">Investor</span>
+              <span class="block text-[10px] text-[#777777] truncate" id="menuUserEmail">user@copenny.ai</span>
+            </div>
+            <button onclick="switchTab('plans'); toggleUserMenu();" class="w-full text-left px-4 py-2 text-xs text-[#D4D4D4] hover:bg-[#1C1C1C] hover:text-white flex items-center gap-2.5 transition-colors">
+              <svg class="w-3.5 h-3.5 text-[#F59E0B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              <span>Subscription & Plans</span>
+            </button>
+            <div class="my-1 border-t border-[#222222]"></div>
+            <button onclick="handleLogout()" class="w-full text-left px-4 py-2 text-xs font-bold text-[#EF4444] hover:bg-[#EF4444]/10 flex items-center gap-2.5 transition-colors">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <span>Log Out</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Direct Quick Logout Button in Header -->
+        <button onclick="handleLogout()" title="Log Out" class="p-1.5 rounded-lg text-[#888888] hover:text-[#EF4444] hover:bg-[#EF4444]/10 transition-colors hidden sm:flex items-center gap-1.5 text-xs font-semibold">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          <span class="hidden md:inline">Log Out</span>
+        </button>
+
+      </div>
+    </header>
+
+    <!-- Hidden compatibility span for tab title -->
+    <span id="tabTitle" class="hidden">Dashboard</span>
+    <span id="userIdDisplay" class="hidden"></span>
+    <span id="tierBadge" class="hidden"></span>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         MAIN SCROLLABLE VIEWS
+    ══════════════════════════════════════════════════════════════ -->
+    <main class="flex-1 overflow-y-auto custom-scrollbar relative">
+
+      <!-- ── TAB: OVERVIEW (PORTFOLIO OVERVIEW) ─────────────────── -->
+      <div id="tab-overview" class="tab-content p-6 lg:p-8 space-y-6 max-w-[1400px] mx-auto">
+
+        <!-- Page Heading (Exact Match) -->
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-2xl lg:text-3xl font-black text-white tracking-tight">Portfolio Overview</h1>
+            <p class="text-xs lg:text-sm text-[#888888] mt-1 font-medium">Your financial command centre</p>
+          </div>
+        </div>
+
+        <!-- Row 1: Top Dual Visual Cards (Dark Matte Containers) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          
+          <!-- Left Visual: Spend Velocity Trend Chart -->
+          <div class="cp-card p-5 flex flex-col justify-between min-h-[220px]">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-[#777777] uppercase tracking-wider">Historical Intelligence & Trend</span>
+              <span class="text-[10px] font-bold text-[#F59E0B] bg-[#F59E0B]/10 border border-[#F59E0B]/20 px-2 py-0.5 rounded">Adaptive Prediction</span>
+            </div>
+            <div id="trendChart" class="w-full h-[170px]"></div>
+          </div>
+
+          <!-- Right Visual: Category Distribution Breakdown -->
+          <div class="cp-card p-5 flex flex-col justify-between min-h-[220px]">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-[#777777] uppercase tracking-wider">Pattern & Category Breakdown</span>
+              <span class="text-[10px] font-bold text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/20 px-2 py-0.5 rounded">Live Telemetry</span>
+            </div>
+            <div id="categoryChart" class="w-full h-[170px]"></div>
+          </div>
+
+        </div>
+
+        <!-- Row 2: 4 Metric Cards (TOTAL INCOME, MONTHLY EXPENSES, NET SAVINGS, SAVINGS RATE) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          <!-- Card 1: TOTAL INCOME -->
+          <div class="cp-card p-4 flex flex-col justify-between min-h-[125px]">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-[#777777]">TOTAL INCOME</span>
+              <span class="text-[#F59E0B]">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>
+                </svg>
+              </span>
+            </div>
+            <div class="my-2">
+              <span class="text-2xl lg:text-3xl font-extrabold text-white tracking-tight" id="stat-income">₹0</span>
+            </div>
+            <div class="text-[11px] text-[#777777]">
+              <span class="text-[#F59E0B] font-medium">↗ Credits</span> from your transactions
+            </div>
+          </div>
+
+          <!-- Card 2: MONTHLY EXPENSES -->
+          <div class="cp-card p-4 flex flex-col justify-between min-h-[125px]">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-[#777777]">MONTHLY EXPENSES</span>
+              <span class="text-[#EF4444]">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="7" y1="7" x2="17" y2="17"/><polyline points="17 7 17 17 7 17"/>
+                </svg>
+              </span>
+            </div>
+            <div class="my-2">
+              <span class="text-2xl lg:text-3xl font-extrabold text-white tracking-tight" id="stat-expense">₹0</span>
+            </div>
+            <div class="text-[11px] text-[#777777]">
+              <span class="text-[#EF4444] font-medium">↘ Debits</span> from your transactions
+            </div>
+          </div>
+
+          <!-- Card 3: NET SAVINGS -->
+          <div class="cp-card p-4 flex flex-col justify-between min-h-[125px]">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-[#777777]">NET SAVINGS</span>
+              <span class="text-[#F59E0B]">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+              </span>
+            </div>
+            <div class="my-2">
+              <span class="text-2xl lg:text-3xl font-extrabold text-white tracking-tight" id="stat-savings">₹0</span>
+            </div>
+            <div class="text-[11px] text-[#777777]">
+              Income minus expenses
+            </div>
+          </div>
+
+          <!-- Card 4: SAVINGS RATE -->
+          <div class="cp-card p-4 flex flex-col justify-between min-h-[125px]">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-[#777777]">SAVINGS RATE</span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded border border-[#EF4444]/30 bg-[#EF4444]/10 text-[#EF4444]" id="savingsRateBadge">
+                Low
+              </span>
+            </div>
+            <div class="my-1">
+              <span class="text-2xl lg:text-3xl font-extrabold text-white tracking-tight" id="stat-savings-rate-val">0%</span>
+            </div>
+            <!-- Progress Bar Track -->
+            <div class="w-full bg-[#202020] h-1.5 rounded-full overflow-hidden mt-1">
+              <div id="savingsRateBar" class="bg-[#F59E0B] h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Row 3: AI Insights (Left) & Chat with Copenny (Right) (Exact Match to Screenshot) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+          <!-- Left Column: AI Insights -->
+          <div class="space-y-3">
+            <h2 class="text-base font-bold text-white tracking-tight">AI Insights</h2>
+            <div class="cp-card p-5 space-y-4">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/20 flex items-center justify-center text-[#F59E0B]">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                  </svg>
+                </div>
+                <div>
+                  <span class="text-xs font-bold text-[#E5E5E5] block">Autonomous Pattern Detection</span>
+                  <span class="text-[11px] text-[#777777]" id="stat-health-note">AI Sync Active</span>
+                </div>
+              </div>
+
+              <div id="stat-ai-insight" class="text-xs text-[#BBBBBB] leading-relaxed border-t border-[#1F1F1F] pt-3.5">
+                Scanning recent transaction vectors to synthesize predictive optimization models...
+              </div>
+
+              <!-- Secondary Indicators & Top Category -->
+              <div class="grid grid-cols-2 gap-3 pt-1 border-t border-[#1F1F1F]">
+                <div class="bg-[#181818] p-3 rounded-lg border border-[#222222]">
+                  <span class="text-[9px] uppercase font-bold text-[#777777] block">Top Category</span>
+                  <span class="text-sm font-bold text-white truncate block mt-0.5" id="stat-top-category">--</span>
+                  <span class="text-[10px] text-[#F59E0B]" id="stat-top-cat-note">Analysis Engine</span>
+                </div>
+                <div class="bg-[#181818] p-3 rounded-lg border border-[#222222]">
+                  <span class="text-[9px] uppercase font-bold text-[#777777] block">Fiscal Health</span>
+                  <span class="text-sm font-bold text-[#10B981] block mt-0.5"><span id="healthScoreLabel">75</span> / 100</span>
+                  <span class="text-[10px] text-[#888888]">Optimal resonance</span>
+                </div>
+              </div>
+
+              <!-- Quick action -->
+              <button onclick="switchTab('chat')" class="w-full py-2.5 rounded-lg bg-[#F59E0B]/10 hover:bg-[#F59E0B]/20 text-[#F59E0B] font-bold text-xs uppercase tracking-wider transition-colors border border-[#F59E0B]/25">
+                Open AI Advisor Channel →
+              </button>
+            </div>
+          </div>
+
+          <!-- Right Column: Chat with Copenny (Exact Match to Screenshot) -->
+          <div class="space-y-3">
+            <h2 class="text-base font-bold text-white tracking-tight">Chat with Copenny</h2>
+            
+            <div class="cp-card p-5 flex flex-col justify-between min-h-[300px]">
+              
+              <!-- Agent Header Inside Card -->
+              <div class="flex items-center justify-between pb-3 border-b border-[#202020]">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/20 flex items-center justify-center text-[#F59E0B]">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="text-xs font-bold text-white block">Copenny AI</span>
+                    <span class="text-[10px] text-[#777777]">Financial Advisor</span>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1.5 text-[10px] text-[#10B981] font-medium">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
+                  Active
+                </div>
+              </div>
+
+              <!-- Mini message stream container -->
+              <div class="my-4 space-y-3">
+                <div class="p-3 bg-[#191919] border border-[#262626] rounded-lg text-xs text-[#D1D1D1] leading-relaxed">
+                  👋 Hello! I'm your CoPenny AI advisor. Ask me anything about your cashflow, subscriptions, or savings goals.
+                </div>
+              </div>
+
+              <!-- Quick query chips -->
+              <div class="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
+                <button onclick="sendQuickMsg('Where did I spend the most this month?')" class="q-chip shrink-0">
+                  Where did I spend the most?
+                </button>
+                <button onclick="sendQuickMsg('What subscriptions am I paying for?')" class="q-chip shrink-0">
+                  Subscriptions
+                </button>
+                <button onclick="sendQuickMsg('How can I save ₹5,000?')" class="q-chip shrink-0">
+                  Save ₹5,000
+                </button>
+              </div>
+
+              <!-- Mini input box -->
+              <div class="pt-2 border-t border-[#1F1F1F]">
+                <div class="flex items-center gap-2">
+                  <input type="text" id="miniChatInput" placeholder="Ask a financial question..."
+                    class="flex-1 bg-[#181818] border border-[#262626] rounded-lg px-3 py-2 text-xs text-white placeholder-[#666666] focus:outline-none focus:border-[#F59E0B]"
+                    onkeydown="if(event.key==='Enter'){sendQuickMsg(this.value);this.value='';}"/>
+                  <button onclick="const el=document.getElementById('miniChatInput');if(el&&el.value){sendQuickMsg(el.value);el.value='';}"
+                    class="bg-[#F59E0B] hover:bg-[#F59E0B]/90 text-black px-4 py-2 rounded-lg font-bold text-xs uppercase tracking-wider transition-colors">
+                    Send
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Row 4: Savings Goals & Daily Spending Widgets -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
+          
+          <!-- Savings Goals Card -->
+          <div class="cp-card p-5" id="widget-savings-goals">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-2.5">
+                <span class="text-[#F59E0B]">🎯</span>
+                <span class="text-sm font-bold text-white">Savings Goals</span>
+              </div>
+              <button onclick="openAddGoalModal()" class="text-xs font-bold text-[#F59E0B] hover:underline bg-[#F59E0B]/10 px-2.5 py-1 rounded border border-[#F59E0B]/20">
+                + Add Goal
+              </button>
+            </div>
+            <div class="space-y-4" id="savings-goals-container">
+              <div class="text-center py-4 text-[#666666] text-xs">Syncing savings goals from ledger...</div>
+            </div>
+          </div>
+
+          <!-- Daily Spending Limit Card -->
+          <div class="cp-card p-5" id="widget-daily-spending">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2.5">
+                <span class="text-[#F59E0B]">⚡</span>
+                <div>
+                  <span class="text-sm font-bold text-white block">Daily Spending Limit</span>
+                  <span class="text-[11px] text-[#777777]">Today vs <span id="dsl-limit-text">₹2,000</span> limit</span>
+                </div>
+              </div>
+              <span id="dsl-status-badge" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20">
+                Active
+              </span>
+            </div>
+
+            <div class="flex items-center justify-between text-xs my-2">
+              <span class="text-[#777777]">Spent today:</span>
+              <span class="font-bold text-white" id="dsl-progress-text">₹0 / ₹2,000</span>
+            </div>
+            <div class="w-full bg-[#202020] h-2 rounded-full overflow-hidden mb-4">
+              <div id="dsl-bar" class="bg-[#F59E0B] h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2.5 pt-2 border-t border-[#1E1E1E] text-center">
+              <div class="bg-[#181818] p-2.5 rounded-lg border border-[#222222]">
+                <span class="text-[9px] uppercase font-bold text-[#777777] block">Remaining</span>
+                <span class="text-xs font-bold text-[#F59E0B] block mt-0.5" id="dsl-remaining">₹2,000</span>
+              </div>
+              <div class="bg-[#181818] p-2.5 rounded-lg border border-[#222222]">
+                <span class="text-[9px] uppercase font-bold text-[#777777] block">This Week</span>
+                <span class="text-xs font-bold text-white block mt-0.5" id="dsl-weekly">₹0</span>
+              </div>
+              <div class="bg-[#181818] p-2.5 rounded-lg border border-[#222222]">
+                <span class="text-[9px] uppercase font-bold text-[#777777] block">Monthly Avg</span>
+                <span class="text-xs font-bold text-white block mt-0.5" id="dsl-monthly-avg">₹0</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Alert History Card -->
+        <div class="cp-card p-5">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#777777]">🔔 Alert & Anomaly History</span>
+            <button id="clearHistoryBtn" class="text-[10px] text-[#666666] hover:text-white uppercase font-bold tracking-wider transition-colors">
+              Clear
+            </button>
+          </div>
+          <div id="alertHistoryContainer" class="space-y-2 max-h-[220px] overflow-y-auto custom-scrollbar">
+            <div class="text-center py-6 text-[#666666] text-xs">
+              Loading anomaly intelligence…
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── TAB: DATA ENGINE (IMPORT LEDGER) ──────────────────── -->
+      <div id="tab-data" class="tab-content hidden p-6 lg:p-8 space-y-6 max-w-[1200px] mx-auto">
+        <div>
+          <h1 class="text-2xl font-black text-white tracking-tight">Data Management & Ingestion</h1>
+          <p class="text-xs text-[#888888] mt-1">Import financial ledgers to calibrate neural forecasting models.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Upload Box -->
+          <div class="cp-card p-6 space-y-4">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-[#777777]">Import Financial Statement</h3>
+            <div id="personalizationStatus"></div>
+            
+            <input type="file" id="csvFile" accept=".csv,.xls,.xlsx" class="hidden" />
+            <label for="csvFile"
+              class="flex flex-col items-center justify-center border-2 border-dashed border-[#2A2A2A] hover:border-[#F59E0B]/50 rounded-xl p-8 cursor-pointer bg-[#181818] transition-all group">
+              <span class="text-3xl mb-2 group-hover:scale-110 transition-transform">📂</span>
+              <span class="text-xs font-bold text-white" id="fileNameDisplay">Select CSV or Excel Statement</span>
+              <span class="text-[10px] text-[#666666] mt-1 uppercase tracking-wider">Max 10MB • Parametric Parsing</span>
+            </label>
+
+            <div class="flex items-center gap-3 bg-[#181818] p-3 rounded-lg border border-[#222222]">
+              <input type="checkbox" id="overwriteCheck" checked class="w-4 h-4 rounded bg-[#101010] border-[#333333] text-[#F59E0B] focus:ring-0 cursor-pointer" />
+              <label for="overwriteCheck" class="text-xs text-[#999999] cursor-pointer">Synchronize and overwrite existing records</label>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 pt-2">
+              <button id="uploadBtn" class="bg-white hover:bg-neutral-200 text-black py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider transition-colors disabled:opacity-50">
+                Analyze Statement
+              </button>
+              <button id="deleteDataBtn" class="bg-[#EF4444]/10 hover:bg-[#EF4444]/20 text-[#EF4444] py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider transition-colors border border-[#EF4444]/20">
+                Wipe Data
+              </button>
+            </div>
+            <div id="uploadStatus"></div>
+          </div>
+
+          <!-- AI Model Calibration -->
+          <div class="cp-card p-6 space-y-4 flex flex-col justify-between">
+            <div>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#777777] mb-2">Model Calibration</h3>
+              <p class="text-xs text-[#A0A0A0] leading-relaxed">
+                Train your personalized neural weights for high-precision spending velocity predictions and adaptive budget recommendation synthesis.
+              </p>
+            </div>
+
+            <div class="p-4 bg-[#181818] rounded-xl border border-[#222222] flex items-center justify-between">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-[#F59E0B] block">Neural Status</span>
+                <span class="text-sm font-bold text-white block mt-0.5" id="modelStatusMsg">Ready for Calibration</span>
+              </div>
+              <span class="text-2xl">🧠</span>
+            </div>
+
+            <div>
+              <button id="trainBtn" class="w-full bg-[#10B981] hover:bg-[#10B981]/90 text-black py-3 rounded-lg font-bold text-xs uppercase tracking-wider transition-colors">
+                Calibrate AI Engine
+              </button>
+              <div id="trainStatus" class="mt-2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: CHAT (FULL AI ADVISOR) ───────────────────────── -->
+      <div id="tab-chat" class="tab-content hidden h-[calc(100vh-56px)] flex-col p-6 max-w-[1200px] mx-auto w-full">
+        
+        <!-- Header inside chat -->
+        <div class="flex items-center justify-between pb-3 mb-2 border-b border-[#1E1E1E]">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/20 flex items-center justify-center text-[#F59E0B] font-bold text-xs">
+              AI
+            </div>
+            <div>
+              <span class="text-sm font-bold text-white block">Copenny AI Advisor</span>
+              <span class="text-[10px] text-[#10B981] flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span> Live Neural Network
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scrollable Messages Container -->
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar flex flex-col">
+          <div class="msg-bot p-4 max-w-2xl text-xs leading-relaxed">
+            <span class="chat-label label-bot">CoPenny · Financial Intelligence</span>
+            Hello! I'm your autonomous financial advisor. I have direct access to your verified transaction telemetry, subscriptions, and savings parameters.<br><br>
+            How can I assist you with your money decisions today?
+          </div>
+        </div>
+
+        <!-- Suggested Prompt Chips -->
+        <div class="py-2.5">
+          <div id="quickQuestions" class="flex gap-2 overflow-x-auto pb-1 custom-scrollbar">
+            <button onclick="sendQuickMsg('Where did I spend the most this month?')" class="q-chip shrink-0">Where did I spend the most this month?</button>
+            <button onclick="sendQuickMsg('How can I save ₹5,000?')" class="q-chip shrink-0">How can I save ₹5,000?</button>
+            <button onclick="sendQuickMsg('Show my spending trends')" class="q-chip shrink-0">Show my spending trends</button>
+            <button onclick="sendQuickMsg('What subscriptions am I paying for?')" class="q-chip shrink-0">What subscriptions am I paying for?</button>
+            <button onclick="sendQuickMsg('Predict my expenses for next month')" class="q-chip shrink-0">Predict my expenses for next month</button>
+          </div>
+        </div>
+
+        <!-- Chat Input Bar -->
+        <div class="cp-card p-3">
+          <form id="chatForm" class="flex gap-2">
+            <textarea id="chatInput" placeholder="Request financial pattern analysis, simulate savings, or audit subscriptions..."
+              class="flex-1 bg-[#181818] border border-[#282828] rounded-lg py-2.5 px-3.5 text-xs text-white placeholder-[#666666] focus:outline-none focus:border-[#F59E0B] resize-none h-11 custom-scrollbar"></textarea>
+            <button type="submit" id="sendBtn"
+              class="bg-[#F59E0B] hover:bg-[#F59E0B]/90 text-black px-6 rounded-lg font-bold text-xs uppercase tracking-wider transition-colors disabled:opacity-50 shrink-0">
+              Transmit
+            </button>
+          </form>
+          <div class="text-center mt-2 text-[10px] text-[#666666]">
+            NOTE : CoPenny AI performs deep data analysis and may take a moment to respond. Verify critical figures.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── TAB: GOALS ────────────────────────────────────────── -->
+      <div id="tab-goals" class="tab-content hidden p-6 lg:p-8 space-y-6 max-w-[1200px] mx-auto">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-2xl font-black text-white tracking-tight">Savings Goals</h1>
+            <p class="text-xs text-[#888888] mt-1">Configure and monitor automated milestone targets.</p>
+          </div>
+          <button onclick="openAddGoalModal()" class="bg-[#F59E0B] hover:bg-[#F59E0B]/90 text-black px-4 py-2 rounded-lg font-bold text-xs uppercase tracking-wider">
+            + New Goal
+          </button>
+        </div>
+
+        <div class="cp-card p-6" id="goals-full-container">
+          <div class="space-y-4" id="goals-page-container">
+            <div class="text-center py-8 text-[#666666] text-xs">Loading savings goals…</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: SUBSCRIPTIONS ────────────────────────────────── -->
+      <div id="tab-subscriptions" class="tab-content hidden p-6 lg:p-8 space-y-6 max-w-[1200px] mx-auto">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-2xl font-black text-white tracking-tight">Recurring Subscriptions</h1>
+            <p class="text-xs text-[#888888] mt-1">Audit, monitor and cancel recurring subscription costs.</p>
+          </div>
+          <span class="text-xs font-bold text-[#F59E0B] bg-[#F59E0B]/10 px-3 py-1 rounded border border-[#F59E0B]/20" id="subMonthlyTotal">
+            --/month
+          </span>
+        </div>
+
+        <div class="cp-card p-6">
+          <div class="space-y-3" id="subscriptionsContainer">
+            <div class="text-center py-8 text-[#666666] text-xs">Auditing recurring commitments…</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: ANALYTICS (BUDGETS) ───────────────────────────── -->
+      <div id="tab-analytics" class="tab-content hidden p-6 lg:p-8 space-y-6 max-w-[1200px] mx-auto">
+        <div>
+          <h1 class="text-2xl font-black text-white tracking-tight">Budgets & Analytics</h1>
+          <p class="text-xs text-[#888888] mt-1">Real-time budget adherence and predictive forecasting telemetry.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          <!-- Health Breakdown -->
+          <div class="cp-card p-6 space-y-4">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#777777]">Fiscal Health Resonance</span>
+            <div id="gamificationBadge" class="flex items-center gap-4 p-4 rounded-xl bg-[#181818] border border-[#222222]">
+              <span class="text-3xl">🌱</span>
+              <div>
+                <p class="text-sm font-bold text-white">Level 1: Genesis</p>
+                <p class="text-[10px] text-[#F59E0B] font-bold uppercase tracking-wider mt-0.5">Tier 1 Analytics Engine</p>
+              </div>
+            </div>
+            <div id="healthBreakdownContainer">
+              <div class="text-center py-6 text-[#666666] text-xs">Loading health metrics…</div>
+            </div>
+          </div>
+
+          <!-- Predictions -->
+          <div class="cp-card p-6 space-y-4">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#777777]">Velocity Forecast</span>
+            <div id="predictionContainer">
+              <div class="text-center py-6 text-[#666666] text-xs">Synthesizing predictive vectors…</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── TAB: RULES (AUTOMATIONS) ──────────────────────────── -->
+      <div id="tab-rules" class="tab-content hidden p-6 lg:p-8 space-y-6 max-w-[1200px] mx-auto">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-2xl font-black text-white tracking-tight">IFTTT Financial Rules</h1>
+            <p class="text-xs text-[#888888] mt-1">Autonomous triggers and notifications.</p>
+          </div>
+        </div>
+        <div class="cp-card p-6">
+          <div class="text-xs text-[#999999] leading-relaxed">
+            Create automated rules using natural language in the <strong>Chat</strong> module (e.g. <em>"If my balance falls below ₹5,000, send me an alert"</em>).
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: PLANS (MEMBERSHIP) ───────────────────────────── -->
+      <div id="tab-plans" class="tab-content hidden p-6 lg:p-8 space-y-6 max-w-[1200px] mx-auto">
+        <div class="text-center py-6">
+          <h1 class="text-3xl font-black text-white tracking-tight">Intelligence Tiers</h1>
+          <p class="text-xs text-[#888888] mt-1">Select the operational tier for your financial intelligence.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <!-- Discovery -->
+          <div class="cp-card p-6 flex flex-col justify-between">
+            <div>
+              <span class="text-[10px] font-bold uppercase text-[#777777] tracking-wider">Baseline</span>
+              <h3 class="text-xl font-bold text-white mt-1 mb-3">Discovery</h3>
+              <div class="text-3xl font-black text-white mb-4">₹0<span class="text-xs font-normal text-[#666666]">/mo</span></div>
+              <ul class="text-xs text-[#AAAAAA] space-y-2 mb-6">
+                <li>✓ 50 Transactions</li>
+                <li>✓ 10 AI Queries</li>
+                <li>✓ Standard Telemetry</li>
+              </ul>
+            </div>
+            <button disabled class="w-full py-2.5 rounded-lg bg-[#1D1D1D] text-[#666666] font-bold text-xs uppercase tracking-wider">
+              Current Plan
+            </button>
+          </div>
+
+          <!-- Pro (Highlighted Gold) -->
+          <div class="cp-card p-6 border-2 border-[#F59E0B] flex flex-col justify-between relative bg-[#181610]">
+            <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#F59E0B] text-black text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-full">
+              Recommended
+            </span>
+            <div>
+              <span class="text-[10px] font-bold uppercase text-[#F59E0B] tracking-wider">Full Protocol</span>
+              <h3 class="text-xl font-bold text-white mt-1 mb-3">Elite Pro</h3>
+              <div class="text-3xl font-black text-white mb-4">₹500<span class="text-xs font-normal text-[#666666]">/mo</span></div>
+              <ul class="text-xs text-[#D5D5D5] space-y-2 mb-6">
+                <li>✓ 500 Transactions</li>
+                <li>✓ 50 AI Queries</li>
+                <li>✓ Full Neural Suite</li>
+                <li>✓ Predictive Matrix</li>
+              </ul>
+            </div>
+            <button onclick="selectPlan('pro')" class="w-full py-2.5 rounded-lg bg-[#F59E0B] hover:bg-[#F59E0B]/90 text-black font-bold text-xs uppercase tracking-wider transition-colors">
+              Upgrade Now
+            </button>
+          </div>
+
+          <!-- Executive -->
+          <div class="cp-card p-6 flex flex-col justify-between">
+            <div>
+              <span class="text-[10px] font-bold uppercase text-[#777777] tracking-wider">Enterprise</span>
+              <h3 class="text-xl font-bold text-white mt-1 mb-3">Sovereign</h3>
+              <div class="text-3xl font-black text-white mb-4">₹900<span class="text-xs font-normal text-[#666666]">/mo</span></div>
+              <ul class="text-xs text-[#AAAAAA] space-y-2 mb-6">
+                <li>✓ Unlimited Nodes</li>
+                <li>✓ Priority Sync</li>
+                <li>✓ Custom Neural Tuning</li>
+              </ul>
+            </div>
+            <button onclick="selectPlan('enterprise')" class="w-full py-2.5 rounded-lg border border-[#2E2E2E] hover:bg-[#1C1C1C] text-white font-bold text-xs uppercase tracking-wider transition-colors">
+              Select
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Compatibility Toast Container -->
+  <div id="copenny-toast" class="fixed bottom-6 right-6 z-50 pointer-events-none space-y-2"></div>
+
+  <!-- Compatibility Plan Gate Overlay -->
+  <div id="planGateOverlay" class="fixed inset-0 z-[100] hidden bg-black/90 backdrop-blur-md flex items-center justify-center p-6">
+    <div class="cp-card p-8 max-w-md w-full text-center space-y-4">
+      <h3 class="text-xl font-bold text-white">Activation Required</h3>
+      <p class="text-xs text-[#888888]">Initialize your personal finance command center.</p>
+      <button onclick="document.getElementById('planGateOverlay').classList.add('hidden')" class="bg-[#F59E0B] text-black px-6 py-2.5 rounded-lg font-bold text-xs uppercase">
+        Continue
+      </button>
+    </div>
+  <!-- Hidden Compatibility Elements for legacy widget hooks -->
+  <div class="hidden" style="display: none !important;">
+    <span id="fhs-score">75</span>
+    <span id="fhs-savings-rate">20%</span>
+    <span id="fhs-debt-ratio">10%</span>
+    <span id="fhs-emergency">60%</span>
+    <svg><circle id="healthRing"></circle><path id="health-gauge-arc"></path></svg>
+    <div id="sim-results"></div>
+    <span id="sim-pct-label">10%</span>
+    <input type="range" id="sim-slider" />
+    <span id="sim-summary-text"></span>
+    <div id="typingIndicator"></div>
+  </div>
+
+  <!-- Add Goal Modal (Custom, matches theme) -->
+  <div id="addGoalModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-[#141414] border border-[#262626] rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5">
+      <div class="flex items-center justify-between border-b border-[#222222] pb-4">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl p-2 rounded-xl bg-[#F59E0B]/10 text-[#F59E0B]">🎯</span>
+          <div>
+            <h3 class="text-base font-bold text-white tracking-tight">Create Savings Goal</h3>
+            <p class="text-[11px] text-[#777777]">Set a milestone and track your savings automated progress.</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeAddGoalModal()" class="text-[#666666] hover:text-white p-1 rounded-lg transition-colors">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <form id="addGoalForm" onsubmit="submitAddGoal(event)" class="space-y-4">
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-[#888888] mb-1.5">Goal Name</label>
+          <input type="text" id="goalInputName" required placeholder="e.g. Emergency Fund, New Car, Dream Vacation"
+            class="w-full bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl px-4 py-2.5 text-xs text-white placeholder-[#555555] focus:outline-none focus:border-[#F59E0B] transition-colors" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-[#888888] mb-1.5">Target Amount (₹)</label>
+            <input type="number" id="goalInputTarget" required min="100" placeholder="e.g. 100000"
+              class="w-full bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl px-4 py-2.5 text-xs text-white placeholder-[#555555] focus:outline-none focus:border-[#F59E0B] transition-colors" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-[#888888] mb-1.5">Current Saved (₹)</label>
+            <input type="number" id="goalInputCurrent" min="0" placeholder="0" value="0"
+              class="w-full bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl px-4 py-2.5 text-xs text-white placeholder-[#555555] focus:outline-none focus:border-[#F59E0B] transition-colors" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-[#888888] mb-1.5">Icon / Emoji</label>
+          <div class="flex items-center gap-2">
+            <input type="text" id="goalInputEmoji" value="🎯" maxlength="2"
+              class="w-12 text-center text-lg bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl py-2 text-white focus:outline-none focus:border-[#F59E0B]" />
+            <div class="flex items-center gap-1.5 text-lg">
+              <button type="button" onclick="document.getElementById('goalInputEmoji').value='🎯'" class="p-1.5 hover:bg-[#222222] rounded-lg">🎯</button>
+              <button type="button" onclick="document.getElementById('goalInputEmoji').value='🚗'" class="p-1.5 hover:bg-[#222222] rounded-lg">🚗</button>
+              <button type="button" onclick="document.getElementById('goalInputEmoji').value='🏠'" class="p-1.5 hover:bg-[#222222] rounded-lg">🏠</button>
+              <button type="button" onclick="document.getElementById('goalInputEmoji').value='✈️'" class="p-1.5 hover:bg-[#222222] rounded-lg">✈️</button>
+              <button type="button" onclick="document.getElementById('goalInputEmoji').value='🛡️'" class="p-1.5 hover:bg-[#222222] rounded-lg">🛡️</button>
+              <button type="button" onclick="document.getElementById('goalInputEmoji').value='💻'" class="p-1.5 hover:bg-[#222222] rounded-lg">💻</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-[#222222]">
+          <button type="button" onclick="closeAddGoalModal()" class="px-4 py-2 text-xs font-semibold text-[#888888] hover:text-white transition-colors">
+            Cancel
+          </button>
+          <button type="submit" id="submitGoalBtn" class="bg-[#F59E0B] hover:bg-[#F59E0B]/90 text-black px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-transform active:scale-95">
+            Create Goal
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAf6kxH4ow0O8fDuDwDMJV7yvePm0P508A",
+      authDomain: "co-penny.firebaseapp.com",
+      projectId: "co-penny",
+      storageBucket: "co-penny.firebasestorage.app",
+      messagingSenderId: "283095051490",
+      appId: "1:283095051490:web:4ca8d62e782b8a653202bb",
+      measurementId: "G-P6GNHSG1JS"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    window.firebaseAuth = { auth };
+  </script>
+
+  <!-- Dashboard JavaScript Hooks -->
+  <script src="/static/dashboard.js"></script>
+  <script src="/static/dashboard_animations.js"></script>
+  <script>
+    // Quick helper to dispatch user prompt to chat
+    function sendQuickMsg(text) {
+      switchTab('chat');
+      setTimeout(() => {
+        const inp = document.getElementById('chatInput');
+        if (inp) {
+          inp.value = text;
+          const form = document.getElementById('chatForm');
+          if (form) form.dispatchEvent(new Event('submit'));
+        }
+      }, 80);
+    }
+
+    // Initialize session at page load
+    document.addEventListener('DOMContentLoaded', async () => {
+      const me = await initSession();
+      if (me) {
+        currentUserId = me.user_id || currentUserId;
+        currentUserName = me.name || me.email?.split('@')[0] || currentUserName;
+        isDemoMode = currentUserId === 'demo_user';
+        
+        // Populate topbar profile
+        const nameEl = document.getElementById('userNameDisplay');
+        const emailEl = document.getElementById('userEmailDisplay');
+        const initialEl = document.getElementById('userInitials');
+        if (nameEl) nameEl.textContent = (me.name || currentUserName).toUpperCase();
+        if (emailEl) emailEl.textContent = (me.email || `${currentUserName}@gmail.com`).toUpperCase();
+        if (initialEl) initialEl.textContent = (me.name || currentUserName)[0].toUpperCase();
+      }
+
+      updateUserDisplay();
+      await refreshDashboard();
+      await loadAlertHistory();
+
+      // Set DB Status
+      const dot = document.getElementById('dbStatusDot');
+      const txt = document.getElementById('dbStatusText');
+      if (dot) { dot.classList.remove('bg-[#EF4444]'); dot.classList.add('bg-[#10B981]'); }
+      if (txt) { txt.textContent = 'Active'; txt.classList.remove('text-[#8E8E8E]'); txt.classList.add('text-[#10B981]'); }
+
+      // Update secondary metric card text to match numbers
+      const incEl = document.getElementById('stat-income');
+      const expEl = document.getElementById('stat-expense');
+      const burnEl = document.getElementById('topbar-burn');
+      const rateEl = document.getElementById('topbar-savings-rate');
+      const rateValEl = document.getElementById('stat-savings-rate-val');
+      const rateBar = document.getElementById('savingsRateBar');
+      
+      // Calculate from live transactions
+      fetch(`/api/transactions/analytics?user_id=${currentUserId}&_t=${Date.now()}`)
+        .then(r => r.json())
+        .then(data => {
+          if (data && data.has_data) {
+            if (incEl) incEl.textContent = `₹${data.total_income.toLocaleString('en-IN')}`;
+            if (expEl) expEl.textContent = `₹${data.total_expense.toLocaleString('en-IN')}`;
+            if (burnEl) burnEl.innerHTML = `₹${Math.round(data.total_expense / 3).toLocaleString('en-IN')}<span class="text-[11px] font-normal text-[#888888]">/mo</span>`;
+            
+            const rate = data.total_income > 0 ? Math.round(((data.total_income - data.total_expense) / data.total_income) * 100) : 0;
+            const clampedRate = Math.max(0, rate);
+            if (rateEl) rateEl.innerHTML = `${clampedRate}% <span class="text-xs">~^</span>`;
+            if (rateValEl) rateValEl.textContent = `${clampedRate}%`;
+            if (rateBar) rateBar.style.width = `${Math.min(100, clampedRate)}%`;
+            
+            const badge = document.getElementById('savingsRateBadge');
+            if (badge) {
+              if (clampedRate >= 30) {
+                badge.textContent = 'High';
+                badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded border border-[#10B981]/30 bg-[#10B981]/10 text-[#10B981]';
+              } else if (clampedRate >= 15) {
+                badge.textContent = 'Optimal';
+                badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded border border-[#F59E0B]/30 bg-[#F59E0B]/10 text-[#F59E0B]';
+              } else {
+                badge.textContent = 'Low';
+                badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded border border-[#EF4444]/30 bg-[#EF4444]/10 text-[#EF4444]';
+              }
+            }
+          }
+        })
+        .catch(() => {});
+    });
+  </script>
+</body>
+</html>

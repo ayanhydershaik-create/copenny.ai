@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us — copenny.ai</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0B0B0B; color: #e2e8f0; font-family: 'Outfit', sans-serif; min-height: 100vh; line-height: 1.6; }
+    
+    nav { 
+      position: sticky; top: 0; z-index: 50; 
+      display: flex; align-items: center; justify-content: space-between; 
+      padding: 1rem 2.5rem; background: rgba(6,11,20,0.8); backdrop-filter: blur(20px); 
+      border-bottom: 1px solid rgba(255,255,255,0.05); 
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo img { height: 36px; }
+    .nav-logo span { font-size: 1.1rem; font-weight: 700; color: #fff; }
+    .nav-back { color: #F59E0B; text-decoration: none; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 6px; transition: opacity 0.2s; }
+    .nav-back:hover { opacity: 0.7; }
+
+    .hero { 
+      text-align: center; padding: 6rem 2rem 4rem; 
+      background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(245,158,11,0.06) 0%, transparent 70%); 
+    }
+    .badge { 
+      display: inline-block; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); 
+      color: #F59E0B; padding: 0.35rem 1rem; border-radius: 999px; font-size: 0.7rem; font-weight: 800; 
+      letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 1.5rem; 
+    }
+    h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; color: #fff; margin-bottom: 1.5rem; letter-spacing: -0.02em; }
+    h1 span { color: #F59E0B; }
+    .subtitle { max-width: 700px; margin: 0 auto; color: #94a3b8; font-size: 1.15rem; }
+
+    .content { max-width: 860px; margin: 0 auto; padding: 4rem 2rem 8rem; }
+    
+    section { margin-bottom: 5rem; }
+    h2 { font-size: 1.8rem; font-weight: 800; color: #fff; margin-bottom: 1.5rem; border-left: 4px solid #F59E0B; padding-left: 1rem; }
+    h3 { font-size: 1.4rem; font-weight: 700; color: #fff; margin-bottom: 1.2rem; margin-top: 3rem; color: #F59E0B; }
+    
+    p { color: #cbd5e1; font-size: 1.05rem; margin-bottom: 1.5rem; }
+    strong { color: #fff; font-weight: 700; }
+    
+    .card { 
+      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); 
+      border-radius: 32px; padding: 3rem; margin-bottom: 3rem;
+      backdrop-filter: blur(10px);
+    }
+    
+    ul { list-style: none; margin-bottom: 2rem; }
+    li { position: relative; padding-left: 1.8rem; margin-bottom: 1rem; color: #cbd5e1; font-size: 1.05rem; }
+    li::before { 
+      content: "•"; position: absolute; left: 0; color: #F59E0B; font-size: 1.5rem; line-height: 1; 
+    }
+
+    .team-footer {
+      text-align: center; margin-top: 6rem; padding-top: 4rem; border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .team-name { font-size: 1.25rem; font-weight: 900; color: #ff4444; text-shadow: 0 0 12px rgba(255,68,68,0.4); margin-bottom: 0.5rem; }
+    .team-tagline { font-size: 0.9rem; color: #64748b; font-weight: 500; letter-spacing: 0.05em; }
+
+    footer { text-align: center; padding: 3rem 2rem; border-top: 1px solid rgba(255,255,255,0.05); color: #475569; font-size: 0.85rem; background: #04080e; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/landing" class="nav-logo">
+    <img src="/static/iconcopenny.png" alt="Co Penny" />
+    <span>copenny.ai</span>
+  </a>
+  <a href="/landing" class="nav-back">← Back to Home</a>
+</nav>
+
+<div class="hero">
+  <div class="badge">About Us</div>
+  <h1>Cognitive <span>Wealth</span> Mission</h1>
+  <p class="subtitle">Empowering individuals through intelligent financial engineering and Team RedHack's vision.</p>
+</div>
+
+<div class="content">
+  <div class="card">
+    <p><strong>Co Penny</strong> is built by <strong>Team RedHack</strong>, a passionate group of developers and problem-solvers focused on creating intelligent solutions that make everyday life easier. Our mission is to simplify personal finance using modern technology and artificial intelligence, helping users understand their spending habits and make smarter financial decisions.</p>
+  </div>
+
+  <section>
+    <h2>Who We Are – Team RedHack</h2>
+    <p><strong>RedHack</strong> is a collaborative team of innovators who believe that technology should empower people. We come from diverse technical backgrounds including software development, artificial intelligence, UI/UX design, and cloud technologies. By combining these skills, we focus on building practical products that solve real-world problems.</p>
+    <p>Our team culture is centered around <strong>creativity, speed, and impact</strong>. We specialize in rapid engineering where we turn ideas into working, high-scale products. RedHack believes that the best ideas are built through teamwork, experimentation, and continuous learning.</p>
+  </section>
+
+  <section>
+    <h2>Our Vision</h2>
+    <p>At RedHack, our vision is to create technology that is <strong>simple, intelligent, and accessible</strong>. With Co Penny, we aim to make financial awareness easier for everyone by transforming raw transaction data into meaningful insights and actionable recommendations.</p>
+  </section>
+
+  <section>
+    <h2>What We Built – Co Penny</h2>
+    <p>Co Penny is an AI-powered financial assistant that analyzes user spending patterns and provides clear insights into where money goes each month. Instead of manually reviewing transactions, users receive helpful summaries such as spending breakdowns, financial health scores, and potential savings suggestions.</p>
+    <p>Our goal is to help users:</p>
+    <ul>
+      <li>Understand their monthly spending habits</li>
+      <li>Identify their top spending categories</li>
+      <li>Discover opportunities to save money</li>
+      <li>Improve their financial health with simple recommendations</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Our Approach</h2>
+    <p>Team RedHack builds products with a <strong>user-first mindset</strong>. We focus on:</p>
+    <ul>
+      <li>Clean and intuitive user interfaces</li>
+      <li>Secure and scalable backend systems</li>
+      <li>Intelligent analytics powered by modern AI</li>
+      <li>Reliable cloud infrastructure</li>
+    </ul>
+    <p>Every feature in Co Penny is designed to make financial insights <strong>clear, actionable, and easy to understand</strong>.</p>
+  </section>
+
+  <section>
+    <h2>Our Commitment</h2>
+    <p>RedHack is committed to building technology responsibly. We prioritize <strong>data privacy, secure architecture, and transparent analytics</strong> so users can trust the insights they receive.</p>
+    <p>As we continue to improve Co Penny, our team remains dedicated to pushing the boundaries of innovation and building tools that genuinely help people manage their finances better.</p>
+  </section>
+
+  <div class="team-footer">
+    <div class="team-name">Team RedHack</div>
+    <div class="team-tagline">Building smarter solutions through innovation, collaboration, and technology.</div>
+  </div>
+</div>
+
+<footer>
+  &copy; 2025 Copenny.ai. All rights reserved.
+</footer>
+
+</body>
+</html>
